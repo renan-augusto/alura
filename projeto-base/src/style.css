@@ -1,0 +1,22 @@
+.carousel-image1 {
+  object-fit: cover;
+  object-position: 0 65%;
+  height: 400px;
+}
+
+.carousel-image2 {
+  object-fit: cover;
+  height: 400px;
+}
+
+.title-fonts {
+  font-family: "Pacifico", cursive;
+}
+
+.special-color {
+  color: darkred;
+}
+
+.botao-special-color {
+  color: darkred;
+}
