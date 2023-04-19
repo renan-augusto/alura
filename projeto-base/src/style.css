@@ -1,3 +1,6 @@
+.card-largura {
+  max-width: 18rem;
+}
 .carousel-image1 {
   object-fit: cover;
   object-position: 0 65%;
@@ -14,9 +17,17 @@
 }
 
 .special-color {
-  color: darkred;
+  color: darkred !important;
 }
 
-.botao-special-color {
-  color: darkred;
+.botao-cor-especial {
+  background-color: darkred !important;
+  color: white !important;
+}
+.borda-cor-especial {
+  border-color: darkreds;
+}
+.card-posicao-imagem {
+  object-fit: cover;
+  height: 200px;
 }
