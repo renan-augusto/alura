@@ -32,10 +32,31 @@ class NegociacaoController {
     this._limpaFormulario();
   }
 
+  importaNegociacoes() {
+    
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'negociacoes/semana');
+    xhr.onreadystatechange = () => {
+      if(xhr.response == 4) {
+        if(xhr.status == 200) {
+          JSON.parse(xhr.responseText)
+            .map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor))
+            .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao)); 
+        } else {
+          console.log(xhr.responseText);
+          this._mensagem.texto = "Não foi possível obter as negociações"
+        }
+      }
+    };
+    xhr.send();
+
+  }
+
   apaga() {
     this._listaNegociacoes.esvazia();
     this._mensagem.texto = "Negociações apagadas com sucesso";
-  
+  }
+
   _criaNegociacao() {
     return new Negociacao(
       DateHelper.textoParaData(this._inputData.value),
@@ -51,4 +72,4 @@ class NegociacaoController {
     this._inputData.focus();
   }
 }
-}
+
