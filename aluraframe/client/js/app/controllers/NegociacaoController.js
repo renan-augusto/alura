@@ -7,19 +7,19 @@ class NegociacaoController {
     this._listaNegociacoes = new Bind(
       new ListaNegociacoes(),
       this._negociacoesView,
-      'adiciona', 'esvazia')
-    ProxyFactory.create(new ListaNegociacoes() ['adiciona', 'esvazia'], () => 
+      "adiciona",
+      "esvazia"
+    );
+    ProxyFactory.create(new ListaNegociacoes()[("adiciona", "esvazia")], () =>
       this._negociacoesView.update(model)
-   )
+    );
 
     this._negociacoesView = new NegociacoesView($("#negociacoesView"));
     this._negociacoesView.update(this._listaNegociacoes);
-    this._mensagem = new Bind(
-      new Mensagem(),
-      this._mensagemView,
-      ['texto']
+    this._mensagem = new Bind(new Mensagem(), this._mensagemView, ["texto"]);
+    ProxyFactory.create(new MensagemView(), ["texto"], (model) =>
+      this._mensagemView.update(model)
     );
-     ProxyFactory.create(new MensagemView(), ['texto'], (model) => this._mensagemView.update(model))
     this._mensagemView = new MensagemView($("#mensagemView"));
     this._mensagemView.update(this._mensagem);
   }
@@ -28,14 +28,43 @@ class NegociacaoController {
     event.preventDefault();
     this._listaNegociacoes.adiciona(this._criaNegociacao());
     this._mensagem.texto = "Negociação adicionada com sucesso";
-   
+
     this._limpaFormulario();
+  }
+
+  importaNegociacoes() {
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "negociacoes/semana");
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          JSON.parse(xhr.responseText).map((objeto) => {
+            new Negociacao(
+              new Date(objeto.data),
+              objeto.quantidade,
+              objeto.valor
+            ).forEach((negociacao) =>
+              this._listaNegociacoes.adiciona(negociacao)
+            );
+            this._mensagem.texto = "Negociaoes importadas com sucesso";
+          });
+        } else {
+          console.log(xhr.responseText);
+          this._mensagem.texto = "Nao foi possivel obter as negociacoes";
+        }
+      }
+    };
+
+    xhr.send();
   }
 
   apaga() {
     this._listaNegociacoes.esvazia();
     this._mensagem.texto = "Negociações apagadas com sucesso";
-  
+  }
+
   _criaNegociacao() {
     return new Negociacao(
       DateHelper.textoParaData(this._inputData.value),
@@ -50,5 +79,4 @@ class NegociacaoController {
     this._inputValor.value = 0.0;
     this._inputData.focus();
   }
-}
 }
