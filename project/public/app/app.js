@@ -1,14 +1,16 @@
-import { handleStatus, log } from "./utils/promise-helpers.js";
+import { handleStatus, log, timeoutPromise } from "./utils/promise-helpers.js";
 import "./utils/array-helpers.js";
+import { notasService as service } from "./nota/service.js";
+import { takeUntil, debounceTime, partialize } from "./utils/operators.js";
 
-const sumItems = (code) => (notas) =>
-  notas
-    .$flatMap((nota) => nota.itens)
-    .filter((item) => item.codigo == code)
-    .reduce((total, item) => total + item.valor, 0);
-document.querySelector("#myButton").onclick = () =>
-  fetch("http://localhost:3000/notas")
-    .then(handleStatus)
-    .then(sumItems("2143"))
+Promise.race([p1, p2]).then(console.log).catch(console.log);
+
+const operation = pipe(partialize(debounceTime, 500), partialize(takeUntil, 3));
+
+const action = operation(() =>
+  timeoutPromise(200, service.sumItems("2143"))
     .then(console.log)
-    .catch(console.log);
+    .catch(console.log)
+);
+
+document.querySelector("#myButton").onclick = () => operation();
